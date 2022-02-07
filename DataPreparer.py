@@ -166,10 +166,9 @@ def loadKarpelCases(directory, mostRecent):
 	receivedCases = receivedCases[receivedCases['Agency'] == 2]
 
 	oldReceivedCases = oldReceivedCases.append(receivedCases)
-
 	oldReceivedCases = oldReceivedCases.dropna(subset = ['CRN'])
 	oldReceivedCases = oldReceivedCases[oldReceivedCases['CRN'].str.contains(r'\d')]
-
+	#oldReceivedCases['CRN'] = oldReceivedCases['CRN'].astype(str).str.replace(r'\D+', '').str[:2] + "-" + oldReceivedCases['CRN'].astype(str).str.replace(r'\D+', '').str[2:].astype('int64').astype(str)
 	karpelDataFrames.append(oldReceivedCases)
 
 	#Old Filed Cases
@@ -327,6 +326,8 @@ def prepareData(shootingDataFrame, agencyList):
 		tempShootingDF = withinFunction(tempShootingDF)
 
 		#Check Referrals, Filings, Declines, and Disposals
+		tempShootingDF['CRN']
+
 		tempShootingDF = checkReferrals(tempShootingDF, karpelCases, agencyList)
 
 		#Export Each Updated Dataframe to Excel

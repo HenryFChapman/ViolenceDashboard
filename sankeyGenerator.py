@@ -6,8 +6,8 @@ import re
 
 def sankeyGenerator(shootingDataFrame, karpelCases):
 
-	shootingDataFrame['CRN'] = shootingDataFrame['CRN'].astype(str).str.replace(r'\D+', '').str[:2] + "-" + shootingDataFrame['CRN'].astype(str).str.replace(r'\D+', '').str[2:].astype('int64').astype(str)
-	karpelCases[0]['CRN'] = karpelCases[0]['CRN'].astype(str).str.replace(r'\D+', '').str[:2] + "-" + karpelCases[0]['CRN'].astype(str).str.replace(r'\D+', '').str[2:].astype(float).astype('int64').astype(str)
+	#shootingDataFrame['CRN'] = shootingDataFrame['CRN'].astype(str).str.replace(r'\D+', '').str[:2] + "-" + shootingDataFrame['CRN'].astype(str).str.replace(r'\D+', '').str[2:].astype('int64').astype(str)
+	#karpelCases[0]['CRN'] = karpelCases[0]['CRN'].astype(str).str.replace(r'\D+', '').str[:2] + "-" + karpelCases[0]['CRN'].astype(str).str.replace(r'\D+', '').str[2:].astype(float).astype('int64').astype(str)
 
 	shootingDataFrame['Type'] = shootingDataFrame['Type'].str.replace("B", 'Non-Fatal')
 	shootingDataFrame['Type'] = shootingDataFrame['Type'].str.replace("H", 'Homicide')
