@@ -165,7 +165,8 @@ def loadKarpelCases(directory, mostRecent):
 	receivedCases = receivedCases[['File #', "CRN", "Enter Dt.","Def. Name", "Def. Race", "Def. Sex", "Def. DOB",  "Agency"]]
 	receivedCases = receivedCases[receivedCases['Agency'] == 2]
 
-	oldReceivedCases = oldReceivedCases.append(receivedCases)
+	oldReceivedCases = pd.concat([oldReceivedCases, receivedCases])
+	
 	oldReceivedCases = oldReceivedCases.dropna(subset = ['CRN'])
 	oldReceivedCases = oldReceivedCases[oldReceivedCases['CRN'].str.contains(r'\d')]
 	#oldReceivedCases['CRN'] = oldReceivedCases['CRN'].astype(str).str.replace(r'\D+', '').str[:2] + "-" + oldReceivedCases['CRN'].astype(str).str.replace(r'\D+', '').str[2:].astype('int64').astype(str)
@@ -181,7 +182,7 @@ def loadKarpelCases(directory, mostRecent):
 	filedCases = filedCases[['File #', 'Def. Name', "CRN", "Enter Dt.", "Filing Date.", "Agency"]]
 	filedCases = filedCases[filedCases['Agency'] == 2]
 	filedCases = filedCases.rename(columns={'Filing Date.': 'Filing Dt.'})
-	oldFiledCases = oldFiledCases.append(filedCases)
+	oldFiledCases = pd.concat([oldFiledCases, filedCases])
 	karpelDataFrames.append(oldFiledCases)
 
 	#Old Disposed Cases
@@ -193,7 +194,9 @@ def loadKarpelCases(directory, mostRecent):
 	disposedCases = pd.read_csv(directory + "Disp_"+mostRecent+"_1800.CSV", encoding='utf-8')
 	disposedCases = disposedCases[["File #", "CRN", "Disp. Code", "Disp. Dt.", "Agency", "Enter Dt."]]
 	disposedCases = disposedCases[disposedCases['Agency'] == 2]
-	oldDisposedCases = oldDisposedCases.append(disposedCases)
+	oldDisposedCases = pd.concat([oldDisposedCases, disposedCases])
+
+	#oldDisposedCases = oldDisposedCases.append(disposedCases)
 
 	disposalReasons = pd.read_csv("Disposition Codes.csv", encoding = 'utf-8')
 	oldDisposedCases = oldDisposedCases.merge(disposalReasons, on = 'Disp. Code', how = 'left')
@@ -206,7 +209,7 @@ def loadKarpelCases(directory, mostRecent):
 
 	declinedCases = pd.read_csv(directory + "Ntfld_"+mostRecent+"_1800.csv")
 	declinedCases = declinedCases[["File #", "CRN", "Disp. Code", "Disp. Dt.", "Agency", "Enter Dt."]]
-	oldDeclinedCases = oldDeclinedCases.append(declinedCases)
+	oldDeclinedCases = pd.concat([oldDeclinedCases, declinedCases])
 
 	declineReasons = pd.read_csv("RefusalReasons.csv", encoding = 'utf-8')
 	oldDeclinedCases = oldDeclinedCases.merge(declineReasons, on = 'Disp. Code', how = 'left')

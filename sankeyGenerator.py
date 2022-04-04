@@ -23,11 +23,9 @@ def sankeyGenerator(shootingDataFrame, karpelCases):
 	incidents = incidents.merge(referredFileNumbers, on = 'CRN', how = 'left')
 	incidents = incidents.merge(years, on = 'CRN', how = 'left')
 
-
 	#Get Category List
 	categoryList = list(set(shootingDataFrame['Type'].tolist()))
 	yearList = list(set(shootingDataFrame['Year'].tolist()))
-
 
 	for category in categoryList:
 
@@ -38,7 +36,6 @@ def sankeyGenerator(shootingDataFrame, karpelCases):
 
 			tempDF = incidents[incidents['Type'].astype(str).str.contains(category)==True]
 			tempDF = tempDF[tempDF['Year'].astype(str).str.contains(year)==True]
-
 
 			numberOfIncidents = len(tempDF.index)
 

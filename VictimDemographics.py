@@ -17,6 +17,7 @@ def getVictimGender(shootingDataFrame, agencyLabel):
 	gender = pd.DataFrame()
 	caseTypes = getCaseTypes()
 	
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		genderList = list(set(shootingDataFrame['Vsex'].tolist()))
@@ -38,7 +39,10 @@ def getVictimGender(shootingDataFrame, agencyLabel):
 			tempVictimGenderDF[caseLabel] = tempVictimGenderDF[caseLabel].fillna(0).astype(int)
 			tempVictimGenderDF['Category'] = tempVictimGenderDF.index
 			tempVictimGenderDF['Year'] = tempYear
-		gender = gender.append(tempVictimGenderDF)
+
+		frames.append(tempVictimGenderDF)
+	
+	gender = pd.concat(frames)
 
 	gender['dataType'] = "GenderDemographics"
 	gender['Agency'] = agencyLabel
@@ -50,6 +54,7 @@ def getVictimAge(shootingDataFrame, agencyLabel):
 	age = pd.DataFrame()
 	caseTypes = getCaseTypes()
 
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		tempVictimAgeDF = pd.DataFrame()
@@ -84,7 +89,9 @@ def getVictimAge(shootingDataFrame, agencyLabel):
 			tempVictimAgeDF[caseLabel] = tempVictimAgeDF[caseLabel].fillna(0).astype(int)
 			tempVictimAgeDF['Category'] = tempVictimAgeDF.index
 			tempVictimAgeDF['Year'] = tempYear
-		age = age.append(tempVictimAgeDF)
+		frames.append(tempVictimAgeDF)
+	
+	age = pd.concat(frames)
 
 	age['dataType'] = "AgeDemographics"
 	age['Agency'] = agencyLabel
@@ -97,6 +104,7 @@ def getVictimRace(shootingDataFrame, agencyLabel):
 	shootingDataFrame = shootingDataFrame.dropna(subset = ['Vrace'])
 	caseTypes = getCaseTypes()
 
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 
@@ -117,7 +125,10 @@ def getVictimRace(shootingDataFrame, agencyLabel):
 			tempVictimRaceDF[caseLabel] = tempVictimRaceDF[caseLabel].fillna(0).astype(int)
 			tempVictimRaceDF['Category'] = tempVictimRaceDF.index
 			tempVictimRaceDF['Year'] = tempYear
-		race = race.append(tempVictimRaceDF)
+		frames.append(tempVictimRaceDF)
+	
+
+	race = pd.concat(frames)
 
 	race['dataType'] = "RaceDemographics"
 	race['Agency'] = agencyLabel
@@ -130,6 +141,8 @@ def getVictimFelon(shootingDataFrame, agencyLabel):
 	caseTypes = getCaseTypes()
 	shootingDataFrame = shootingDataFrame.dropna(subset = ['vFelon'])
 
+
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 
@@ -151,8 +164,9 @@ def getVictimFelon(shootingDataFrame, agencyLabel):
 			tempVictimFelon['Category'] = tempVictimFelon.index
 			tempVictimFelon['Year'] = tempYear
 
-		victimFelon = victimFelon.append(tempVictimFelon)
+		frames.append(tempVictimFelon)
 
+	victimFelon = pd.concat(frames)
 	victimFelon['dataType'] = "Felons"
 	victimFelon['Agency'] = agencyLabel
 	victimFelon = victimFelon[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -164,6 +178,7 @@ def getHospital(shootingDataFrame, agencyLabel):
 	caseTypes = getCaseTypes()
 	shootingDataFrame = shootingDataFrame.dropna(subset = ['Hospital'])
 
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		tempHospitalDF = pd.DataFrame()
@@ -183,7 +198,8 @@ def getHospital(shootingDataFrame, agencyLabel):
 			tempHospitalDF[caseLabel] = tempShootingDF.groupby(['Hospital']).size()
 			tempHospitalDF['Category'] = tempHospitalDF.index
 			tempHospitalDF['Year'] = tempYear
-		hospital = hospital.append(tempHospitalDF)
+		frames.append(tempHospitalDF)
+	hospital = pd.concat(frames)
 
 	hospital['dataType'] = "Hospital"
 	hospital['Agency'] = agencyLabel
@@ -198,6 +214,8 @@ def getShellCasings(shootingDataFrame, agencyLabel):
 	#Remove Duplicates of File Numbers
 	shootingDataFrame = shootingDataFrame.drop_duplicates(subset='CRN', keep="first")
 
+
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		tempShellCasingsDF = pd.DataFrame()
@@ -228,9 +246,11 @@ def getShellCasings(shootingDataFrame, agencyLabel):
 
 			tempShellCasingsDF = tempShellCasingsDF.sort_values(caseLabel,ascending=False)
 			tempShellCasingsDF = tempShellCasingsDF.dropna(subset = ['Category'])
+		frames.append(tempShellCasingsDF)
 
-		shellCasings = shellCasings.append(tempShellCasingsDF)
+		#shellCasings = shellCasings.append(tempShellCasingsDF)
 
+	shellCasings = pd.concat(frames)
 	shellCasings['dataType'] = "GunsUsed"
 	shellCasings['Agency'] = agencyLabel
 	shellCasings = shellCasings[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -241,6 +261,7 @@ def getWoundTypes(shootingDataFrame, agencyLabel):
 	woundLocations = pd.DataFrame()
 	caseTypes = getCaseTypes()
 
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 
@@ -269,9 +290,9 @@ def getWoundTypes(shootingDataFrame, agencyLabel):
 
 			tempWoundDF = tempWoundDF.sort_values(caseLabel,ascending=False)
 			tempWoundDF = tempWoundDF.dropna(subset = ['Category'])
+		frames.append(tempWoundDF)
 
-		woundLocations = woundLocations.append(tempWoundDF)
-
+	woundLocations = pd.concat(frames)
 	woundLocations['dataType'] = "WoundLocations"
 	woundLocations['Agency'] = agencyLabel
 	woundLocations = woundLocations[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -283,6 +304,8 @@ def getDVAffiliated(shootingDataFrame, agencyLabel):
 	caseTypes = getCaseTypes()
 	shootingDataFrame = shootingDataFrame.dropna(subset = ['DV'])
 
+
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		#tempShootingDF = shootingDataFrame[shootingDataFrame['DateTime'].dt.year == tempYear]
@@ -299,8 +322,10 @@ def getDVAffiliated(shootingDataFrame, agencyLabel):
 			tempVictimDVDF['Category'] = tempVictimDVDF.index
 			tempVictimDVDF['Year'] = tempYear
 
-		victimDV = victimDV.append(tempVictimDVDF)
+		frames.append(tempVictimDVDF)
 
+
+	victimDV = pd.concat(frames)
 	victimDV['dataType'] = "DV"
 	victimDV['Agency'] = agencyLabel
 	victimDV = victimDV[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -311,6 +336,8 @@ def getDaysOfTheWeek(shootingDataFrame, agencyLabel):
 	weekDay = pd.DataFrame()
 	caseTypes = getCaseTypes()
 
+
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		tempWeekday = pd.DataFrame()
@@ -337,8 +364,9 @@ def getDaysOfTheWeek(shootingDataFrame, agencyLabel):
 			tempWeekday['Category'] = pd.Categorical(tempWeekday['Category'], categories=cats, ordered=True)
 			tempWeekday = tempWeekday.sort_values('Category')
 
-		weekDay = weekDay.append(tempWeekday)
+		frames.append(tempWeekday)
 
+	weekDay = pd.concat(frames)
 	weekDay['dataType'] = "Weekday"
 	weekDay['Agency'] = agencyLabel
 	weekDay = weekDay[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -352,6 +380,7 @@ def getTimeOfDay(shootingDataFrame, agencyLabel):
 	shootingDataFrame['DateTime'] = pd.to_datetime(shootingDataFrame['DateTime'])
 	shootingDataFrame['HourOfDay'] = shootingDataFrame['DateTime'].dt.hour
 
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		tempHour = pd.DataFrame(index = set(shootingDataFrame['HourOfDay'].tolist()))
@@ -371,8 +400,9 @@ def getTimeOfDay(shootingDataFrame, agencyLabel):
 			tempHour['Year'] = tempYear
 			tempHour = tempHour.sort_values('Category', ascending = True)
 
-		hourOfDay = hourOfDay.append(tempHour)
+		frames.append(tempHour)
 
+	hourOfDay = pd.concat(frames)
 	hourOfDay['dataType'] = "HourOfDay"
 	hourOfDay['Category'] = hourOfDay['Category'].astype(str)
 	hourOfDay['Category'] = hourOfDay['Category'].str.zfill(2)
@@ -389,6 +419,8 @@ def getPatrolDivision(shootingDataFrame, agencyLabel):
 	cleanedList = [x for x in patrolList if x != '']
 	cleanedList = [x for x in cleanedList if x != 'UNKNOWN']
 
+
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 
@@ -405,8 +437,11 @@ def getPatrolDivision(shootingDataFrame, agencyLabel):
 
 			tempPatrolDivision['Category'] = tempPatrolDivision.index
 			tempPatrolDivision['Year'] = tempYear
-		patrolDivision = patrolDivision.append(tempPatrolDivision)
 
+		frames.append(tempPatrolDivision)
+		#patrolDivision = patrolDivision.append(tempPatrolDivision)
+
+	patrolDivision = pd.concat(frames)
 	patrolDivision['dataType'] = "PatrolDivision"
 	patrolDivision['caseLabel'] = caseLabel
 	patrolDivision = patrolDivision[patrolDivision['Category']!= "UNK"]
@@ -423,6 +458,8 @@ def getRefferalStats(shootingDataFrame, agencyLabel):
 
 	shootingDataFrame = shootingDataFrame[shootingDataFrame['Ref'] != "NoJuris"]
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempReferralStats = pd.DataFrame(index= ["Yes", "No"])
 
@@ -439,9 +476,9 @@ def getRefferalStats(shootingDataFrame, agencyLabel):
 			tempReferralStats['Category'] = tempReferralStats.index
 			tempReferralStats['Year'] = tempYear
 
-		caseReferrals = caseReferrals.append(tempReferralStats)
+		frames.append(tempReferralStats)
 
-
+	caseReferrals = pd.concat(frames)
 	caseReferrals['dataType'] = "ReferralRate"
 	caseReferrals['Agency'] = agencyLabel
 	caseReferrals = caseReferrals[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -454,6 +491,8 @@ def getFilingStats(shootingDataFrame, agencyLabel):
 
 	shootingDataFrame = shootingDataFrame[shootingDataFrame['Filed'] != "NoJuris"]
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempFilingStats = pd.DataFrame(index= ["Yes", "No"])
 
@@ -463,15 +502,15 @@ def getFilingStats(shootingDataFrame, agencyLabel):
 			tempShootingDF = tempShootingDF.reset_index()
 			caseLabel = getCaseLabel(caseType)
 
-			#tempShootingDF = tempShootingDF.drop_duplicates(subset = ['CRN'])
-
 			tempShootingDF = tempShootingDF.reset_index()
 
 			tempFilingStats[caseLabel] = tempShootingDF.groupby(['Filed']).size()
 			tempFilingStats['Category'] = tempFilingStats.index
 			tempFilingStats['Year'] = tempYear
-		caseFilings = caseFilings.append(tempFilingStats)
+		frames.append(tempFilingStats)
 
+
+	caseFilings = pd.concat(frames)
 	caseFilings['dataType'] = "FiledRate"
 	caseFilings['Agency'] = agencyLabel
 	caseFilings = caseFilings[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -484,6 +523,8 @@ def disposalStats(shootingDataFrame, agencyLabel):
 
 	shootingDataFrame = shootingDataFrame[shootingDataFrame['Filed'] != "NoJuris"]
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempDisposalStats = pd.DataFrame(index= ["Yes", "No"])
 
@@ -501,8 +542,10 @@ def disposalStats(shootingDataFrame, agencyLabel):
 			tempDisposalStats['Category'] = tempDisposalStats.index
 			tempDisposalStats['Year'] = tempYear
 
-		caseDisposal = caseDisposal.append(tempDisposalStats)
+		frames.append(tempDisposalStats)
 
+
+	caseDisposal = pd.concat(frames)
 	caseDisposal['dataType'] = "DisposedRate"
 	caseDisposal['Agency'] = agencyLabel
 	caseDisposal = caseDisposal[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -515,6 +558,8 @@ def getReviewRate(shootingDataFrame, agencyLabel):
 
 	shootingDataFrame = shootingDataFrame[shootingDataFrame['Review'] != "NoJuris"]
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempReviewStats = pd.DataFrame(index= ["Yes", "No"])
 
@@ -536,7 +581,9 @@ def getReviewRate(shootingDataFrame, agencyLabel):
 			tempReviewStats['Category'] = tempReviewStats.index
 			tempReviewStats['Year'] = tempYear
 
-		caseReview = caseReview.append(tempReviewStats)
+		frames.append(tempReviewStats)
+
+	caseReview = pd.concat(frames)	
 
 	caseReview['dataType'] = "ReviewRate"
 	caseReview['Agency'] = agencyLabel
@@ -550,6 +597,8 @@ def getDeclineRate(shootingDataFrame, agencyLabel):
 
 	shootingDataFrame = shootingDataFrame[shootingDataFrame['Declined'] != "NoJuris"]
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempDisposalStats = pd.DataFrame(index= ["Yes", "No"])
 
@@ -570,8 +619,10 @@ def getDeclineRate(shootingDataFrame, agencyLabel):
 			tempDisposalStats['Category'] = tempDisposalStats.index
 			tempDisposalStats['Year'] = tempYear
 
-		caseDisposal = caseDisposal.append(tempDisposalStats)
+		frames.append(tempDisposalStats)
 
+
+	caseDisposal = pd.concat(frames)	
 	caseDisposal['dataType'] = "DeclinedRate"
 	caseDisposal['Agency'] = agencyLabel
 	caseDisposal = caseDisposal[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -582,6 +633,8 @@ def getKCJacksonCountyIncidents(shootingDataFrame, agencyLabel):
 	JaCoIncidents = pd.DataFrame()
 	caseTypes = getCaseTypes()
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempJackStats = pd.DataFrame(index = caseTypes)
 
@@ -602,8 +655,9 @@ def getKCJacksonCountyIncidents(shootingDataFrame, agencyLabel):
 			tempJackStats['Category'] = tempJackStats.index
 			tempJackStats['Year'] = tempYear
 
-		JaCoIncidents = JaCoIncidents.append(tempJackStats)
+		frames.append(tempJackStats)
 
+	JaCoIncidents = pd.concat(frames)	
 	JaCoIncidents['dataType'] = "JaCoIncidents"
 	JaCoIncidents['Agency'] = agencyLabel
 	JaCoIncidents = JaCoIncidents[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -617,6 +671,8 @@ def getJailStats(shootingDataFrame, filedCases, disposedCases, agencyLabel):
 	jailInmates = pd.DataFrame()
 	caseTypes = getCaseTypes()
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempJailStats = pd.DataFrame()
 
@@ -645,8 +701,9 @@ def getJailStats(shootingDataFrame, filedCases, disposedCases, agencyLabel):
 			tempJailStats['Category'] = tempJailStats.index
 			tempJailStats['Year'] = tempYear
 
-		jailInmates = jailInmates.append(tempJailStats)
+		frames.append(tempJailStats)
 
+	jailInmates = pd.concat(frames)
 	jailInmates['dataType'] = "JailInmates"
 
 	jailInmates['Agency'] = agencyLabel
@@ -660,6 +717,8 @@ def getReferralTimeline(shootingDataFrame, referredCases, agencyLabel):
 	caseTypes = getCaseTypes()
 	shootingDataFrame = shootingDataFrame.drop_duplicates(subset='CRN', keep="first")
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempReferralTimeline = pd.DataFrame()
 
@@ -691,8 +750,9 @@ def getReferralTimeline(shootingDataFrame, referredCases, agencyLabel):
 
 			tempReferralTimeline['Category'] = tempReferralTimeline.index
 			tempReferralTimeline['Year'] = tempYear
-		referralTimeline = referralTimeline.append(tempReferralTimeline)
+		frames.append(tempReferralTimeline)
 
+	referralTimeline = pd.concat(frames)
 	referralTimeline['dataType'] = "CaseReferralAge"
 	referralTimeline['Agency'] = agencyLabel
 	referralTimeline = referralTimeline[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -706,6 +766,8 @@ def getFilingTimeLine(shootingDataFrame, filedCases, agencyLabel):
 	caseTypes = getCaseTypes()
 	shootingDataFrame = shootingDataFrame.drop_duplicates(subset='CRN', keep="first")
 
+
+	frames = []
 	for tempYear in getYearList():
 		tempFilingTimeline = pd.DataFrame()
 
@@ -737,7 +799,9 @@ def getFilingTimeLine(shootingDataFrame, filedCases, agencyLabel):
 
 			tempFilingTimeline['Category'] = tempFilingTimeline.index
 			tempFilingTimeline['Year'] = tempYear
-		filingTimeline = filingTimeline.append(tempFilingTimeline)
+		frames.append(tempFilingTimeline)
+
+	filingTimeline = pd.concat(frames)
 
 	filingTimeline['dataType'] = "CaseFilingAge"
 	filingTimeline['Agency'] = agencyLabel
@@ -753,6 +817,7 @@ def getDeclineReasons(shootingDataFrame, declinedCases, agencyLabel):
 	shootingDataFrame = shootingDataFrame[shootingDataFrame['Filed']=='No']
 	shootingDataFrame = shootingDataFrame.merge(declinedCases, on = 'CRN', how = 'left')
 
+	frames = []
 	for tempYear in getYearList():
 
 		dispList = list(set(shootingDataFrame['Disp. Code'].tolist()))
@@ -777,7 +842,9 @@ def getDeclineReasons(shootingDataFrame, declinedCases, agencyLabel):
 			tempDeclineReasons['Category'] = tempDeclineReasons.index
 			tempDeclineReasons['Year'] = tempYear
 
-		declineReasons = declineReasons.append(tempDeclineReasons)
+		frames.append(tempDeclineReasons)
+
+	declineReasons = pd.concat(frames)
 	
 	declineReasons['Sum'] = declineReasons['Homicide'] + declineReasons['Non-Fatal'] + declineReasons['Self-Inflicted']
 	declineReasons = declineReasons[declineReasons['Sum']!=0] 
@@ -789,6 +856,7 @@ def getDeclineReasons(shootingDataFrame, declinedCases, agencyLabel):
 	declineReasons.to_csv("DataForDashboard\\"+agencyLabel+" - Crime - CaseDeclineReasons.csv", encoding = 'utf-8', index = False)
 
 	return 0
+
 
 def getCurrentPercentageThroughYear(shootingDataFrame):
 
@@ -882,7 +950,7 @@ def getHistoricalGraph(currentHomicidesNonFatals, shootingDataFrame, agencyLabel
 	tempDataFrame['Homicide'] = [projectedFinalHomicide]
 	tempDataFrame['Non-Fatal'] = [projectedFinalNonFatal]
 
-	historicalData = historicalData.append(tempDataFrame)
+	historicalData = pd.concat([historicalData, tempDataFrame])
 	historicalData['Self-Inflicted'] = historicalData.iloc[:,2].rolling(window=3).mean()
 
 	historicalData['dataType'] = 'HistoricalHomicides'

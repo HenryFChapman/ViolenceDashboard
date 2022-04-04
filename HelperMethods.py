@@ -8,6 +8,8 @@ def loadDataFrame():
 
 	shootingDataFrame = pd.DataFrame()
 
+	frames = []
+
 	#For Each Year of Shooting Data
 	for item in os.listdir(shootingFolderLocation):
 		tempShootingDF = pd.read_excel(shootingFolderLocation+item)
@@ -24,8 +26,9 @@ def loadDataFrame():
 		tempShootingDF['Filed'] = tempShootingDF['Filed'].fillna("").str.title()
 		tempShootingDF['Patrol'] = tempShootingDF['Patrol'].fillna("").str.upper()
 		tempShootingDF['Year'] = item.split(" ")[0]
+		frames.append(tempShootingDF)
 
-		shootingDataFrame = shootingDataFrame.append(tempShootingDF)
+	shootingDataFrame = pd.concat(frames)
 
 	return shootingDataFrame
 
@@ -59,7 +62,7 @@ def generateSankeyLinks(largeDataFrame):
 	dataFrame['Self-Inflicted'] = 0
 	dataFrame['Sum'] = 0
 
-	largeDataFrame = largeDataFrame.append(dataFrame)
+	largeDataFrame = pd.concat([largeDataFrame,dataFrame])
 
 	return largeDataFrame
 
@@ -70,19 +73,22 @@ def concatenateCases():
 
 	largeDataFrame = pd.DataFrame()
 
+	frames = []
+
 	for data in dataFolder:
 		tempDataFrame = pd.read_csv(dataDirectoryLabel+data)
 		column_list = list(tempDataFrame)
 		column_list.remove("dataType")
 		column_list.remove("Category")
 		column_list.remove("Year")
-		tempDataFrame["Sum"] = tempDataFrame[column_list].sum(axis=1)
-		largeDataFrame = largeDataFrame.append(tempDataFrame)
+		tempDataFrame["Sum"] = tempDataFrame[column_list].sum(axis=1, numeric_only=True)
+
+		frames.append(tempDataFrame)
+	largeDataFrame = pd.concat(frames)
 
 	largeDataFrame['Year'] = largeDataFrame['Year'].astype(int).astype(str)
 	largeDataFrame['Category'] = largeDataFrame['Category'].astype(str)
 	largeDataFrame['Category'] = largeDataFrame['Category'].str.replace(', ', " - ")
-	largeDataFrame = largeDataFrame.append({'dataType': "LastUpdated", 'Category': datetime.now(), 'Year': "2021", 'Homicide': 0, 'Non-Fatal':0, "Self-Inflicted":0, "Sum": 0}, ignore_index=True)
 
 	largeDataFrame['Agency'] = largeDataFrame['Agency'].str.replace('All', '*All')
 

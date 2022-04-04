@@ -34,6 +34,8 @@ def getDefendantGender(shootingDataFrame, agencyLabel):
 	#Grabs Case Types
 	caseTypes = getCaseTypes()
 
+
+	frames = []
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
 		
@@ -65,9 +67,11 @@ def getDefendantGender(shootingDataFrame, agencyLabel):
 			tempDefendantGenderDF['Year'] = tempYear
 		
 		#Appends that data to the entire gender dataframe
-		gender = gender.append(tempDefendantGenderDF)
+		frames.append(tempDefendantGenderDF)
 
 	#Cleans entire gender dataframe and exports it as a CSV file.
+
+	gender = pd.concat(frames)
 	gender['dataType'] = "defendantGenderDemographics"
 	gender['Agency'] = agencyLabel
 	gender = gender[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
@@ -87,6 +91,8 @@ def getDefendantRace(shootingDataFrame, agencyLabel):
 
 	#Grabs Case Types
 	caseTypes = getCaseTypes()
+
+	frames = []
 
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
@@ -121,9 +127,9 @@ def getDefendantRace(shootingDataFrame, agencyLabel):
 			tempDefendantRaceDF['Year'] = tempYear
 
 		#Appends that data to the entire race dataframe
-		race = race.append(tempDefendantRaceDF)
+		frames.append(tempDefendantRaceDF)
 
-
+	race = pd.concat(frames)
 	#Cleans entire race dataframe and exports it as a CSV file.
 	race['dataType'] = "defendantRaceDemographics"
 	race['Agency'] = agencyLabel
@@ -139,6 +145,8 @@ def getDefendantRace(shootingDataFrame, agencyLabel):
 def getDefendantAge(shootingDataFrame, agencyLabel):
 	age = pd.DataFrame()
 	caseTypes = getCaseTypes()
+
+	frames = []
 
 	#For Each Year of Shooting Data
 	for tempYear in getYearList():
@@ -163,7 +171,8 @@ def getDefendantAge(shootingDataFrame, agencyLabel):
 
 			#Calculate Ages of Victims
 			tempShootingDF['DateTime'] = pd.to_datetime(tempShootingDF['DateTime'])
-			tempShootingDF['Def. DOB'] = pd.to_datetime(tempShootingDF['Def. DOB'])
+
+			tempShootingDF['Def. DOB'] = pd.to_datetime(tempShootingDF['Def. DOB'], errors = 'coerce', infer_datetime_format=True)
 			tempShootingDF['Age'] = tempShootingDF['DateTime'] - tempShootingDF['Def. DOB']
 			tempShootingDF['Age'] = tempShootingDF['Age']/np.timedelta64(1, "Y")
 
@@ -179,9 +188,9 @@ def getDefendantAge(shootingDataFrame, agencyLabel):
 			tempDefendantAgeDF['Year'] = tempYear
 		
 		#Appends that data to the entire race dataframe
-		age = age.append(tempDefendantAgeDF)
+		frames.append(tempDefendantAgeDF)
 
-
+	age = pd.concat(frames)
 	#Cleans entire age dataframe and exports it as a CSV file.
 	age['dataType'] = "defendantAgeDemographics"
 	age['Agency'] = agencyLabel
@@ -195,6 +204,8 @@ def getDefendantBond(shootingDataFrame, agencyLabel):
 	bonds = pd.DataFrame()
 	caseTypes = getCaseTypes()
 
+
+	frames = []
 	#For each year of shooting data:
 	for tempYear in getYearList():
 
@@ -230,9 +241,9 @@ def getDefendantBond(shootingDataFrame, agencyLabel):
 			tempDefendantBondDF['Year'] = tempYear
 		
 		#Appends that data to the entire race dataframe
-		bonds = bonds.append(tempDefendantBondDF)
+		frames.append(tempDefendantBondDF)
 
-
+	bonds = pd.concat(frames)
 	#Cleans entire Bonds dataframe and exports it as a CSV file.
 	bonds['dataType'] = "defendantInitialBond"
 	bonds['Agency'] = agencyLabel
