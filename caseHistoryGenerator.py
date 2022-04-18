@@ -19,6 +19,12 @@ def reasonsToNodes(reasonDF, links):
 
 def generateAllCaseHistory(crimeCategory, numberOfIncidents, atLeast1ReferredCase, receivedFileNumbers, listOfKarpelCases):
 
+
+	flag = False
+	if "All" in crimeCategory:
+		flag = True
+		print(flag)
+
 	remainingMultiDefendants = len(receivedFileNumbers) - atLeast1ReferredCase
 
 	numberNotReferred = numberOfIncidents-atLeast1ReferredCase
@@ -40,11 +46,18 @@ def generateAllCaseHistory(crimeCategory, numberOfIncidents, atLeast1ReferredCas
 	disposedSet = set(listOfKarpelCases[2]['File #'].tolist())
 	disposedFileNumbers = disposedSet.intersection(receivedFileNumbers)
 	disposedFileNumbers = list(disposedSet.intersection(filedFileNumbers))
-	disposalReasons = disposedCaseCounter(disposedFileNumbers, listOfKarpelCases[2])
+
+	if flag == True:
+		print(disposedFileNumbers)
+	disposalReasons = disposedCaseCounter(disposedFileNumbers, listOfKarpelCases[2], flag)
 
 	#Currently Pending/Under Warrant Status
 	#Currently Pending = Filed - Disposed
 	activeSet = set(filedFileNumbers).difference(disposedFileNumbers)
+
+
+	#if "All" in crimeCategory:
+	#	print(activeSet)
 
 	links = [
 		{'source': 'A - Incidents Occured', 'target':'B - Received by Office', 'value': atLeast1ReferredCase},

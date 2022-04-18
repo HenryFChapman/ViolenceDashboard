@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 
-def disposedCaseCounter(fnList, disposedCaseDF):
+def disposedCaseCounter(fnList, disposedCaseDF, flag):
 
     #Here we're trying to get one disposition reason per disposed case
     #Here's the prioritization of disposed cases
@@ -25,6 +25,10 @@ def disposedCaseCounter(fnList, disposedCaseDF):
         elif "Drug Court" in justThatCase['Activity'].tolist():
             dispositionReasons.append("Drug Court")
         elif "Entire Dismissal" in justThatCase['Activity'].tolist():
+
+            if flag == True:
+                print(tempFN)
+
             dispositionReasons.append("Entire Dismissal")
         elif "No Prosecution" in justThatCase['Activity'].tolist():
             dispositionReasons.append("No Prosecution")
