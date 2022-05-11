@@ -39,17 +39,12 @@ def convertPDFs(OriginDirectory, DestionationDirectory):
 			tempPatrol = ""
 			tempSector = ""
 
-			#for element in page_layout:
-				#if isinstance(element, LTTextContainer):
-				#	print(element.get_text())
-
 			#Per Element in Page
 			for index, element in enumerate(page_layout):
 				if isinstance(element, LTTextContainer):
 					tempTextSegment = element.get_text()
 					tempOutputString = re.sub(r'(?:(?<=\/) | (?=\/))','',tempTextSegment)
 					tempOutputString = re.sub(r"\s\s+", " ", tempOutputString)
-					#print(tempOutputString)
 
 					for incidentType in incidentTypeList:
 						if incidentType in tempOutputString and "IMPACT SCORE:" in tempOutputString:
@@ -86,8 +81,7 @@ def convertPDFs(OriginDirectory, DestionationDirectory):
 
 					if "VICTIM" in tempOutputString:
 						tempOutputString = tempOutputString.split("SUSPECT")[0]
-						#print(enumerate(page_layout))
-						#print(page_layout[index])
+
 
 			incidentOutput = tempIncidentType + "," + tempCRN + "," + tempDate + "," + tempAddress + "," + tempPatrol + "," + tempSector + "\n"
 

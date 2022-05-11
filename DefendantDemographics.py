@@ -199,59 +199,6 @@ def getDefendantAge(shootingDataFrame, agencyLabel):
 	age.reset_index(inplace=False)
 	age.to_csv("DataForDashboard\\"+agencyLabel+" - Defendant - AgeDemographics.csv", encoding='utf-8', index=False)
 
-
-def getDefendantBond(shootingDataFrame, agencyLabel):
-	bonds = pd.DataFrame()
-	caseTypes = getCaseTypes()
-
-
-	frames = []
-	#For each year of shooting data:
-	for tempYear in getYearList():
-
-		#Initializes DataFrame
-		tempDefendantBondDF = pd.DataFrame()
-
-		tempDefendantBondDF.reset_index()
-		tempDefendantBondDF = tempDefendantBondDF.reset_index().dropna().set_index('index')
-
-		for caseType in caseTypes:
-
-			caseSpecificDataFrame = filterDataFrameByCaseType(shootingDataFrame, caseType)
-			caseSpecificDataFrame = caseSpecificDataFrame.dropna(subset = ['Initial Bond'])
-
-			#Filters just the year we want
-			tempShootingDF = caseSpecificDataFrame[caseSpecificDataFrame['DateTime'].dt.year == tempYear]
-			caseLabel = getCaseLabel(caseType)
-
-			#Drop Nulls and Unknowns
-			tempShootingDF = tempShootingDF.dropna(subset = ['Initial Bond'])
-			tempShootingDF = tempShootingDF.reset_index()
-
-			tempShootingDF['Initial Bond'] = tempShootingDF['Initial Bond']/1000
-
-			#Sort Ages into Bins
-			tempShootingDF = tempShootingDF.sort_values('Initial Bond')
-			bins = np.arange(0, 250, 25)
-			ind = np.digitize(tempShootingDF['Initial Bond'], bins)
-
-			tempDefendantBondDF[caseLabel] = tempShootingDF['Initial Bond'].value_counts(bins=bins, sort=False)
-			tempDefendantBondDF[caseLabel] = tempDefendantBondDF[caseLabel].fillna(0).astype(int)
-			tempDefendantBondDF['Category'] = tempDefendantBondDF.index
-			tempDefendantBondDF['Year'] = tempYear
-		
-		#Appends that data to the entire race dataframe
-		frames.append(tempDefendantBondDF)
-
-	bonds = pd.concat(frames)
-	#Cleans entire Bonds dataframe and exports it as a CSV file.
-	bonds['dataType'] = "defendantInitialBond"
-	bonds['Agency'] = agencyLabel
-	bonds = bonds[['dataType', 'Agency', 'Category', 'Year', "Homicide", "Non-Fatal", "Self-Inflicted"]]
-
-	bonds.reset_index(inplace=False)
-	bonds.to_csv("DataForDashboard\\"+agencyLabel+" - Defendant - Bonds.csv", encoding='utf-8', index=False)
-
 # Function:  runAnalysis
 # Purpose:   This function calls the gender, race, and age functions.
 # Arguments: shootingDataFrame, karpelCases, agencyLabel
@@ -267,11 +214,6 @@ def runAnalysis(shootingDataFrame, karpelCases, agencyLabel):
 	shootingDataFrame = shootingDataFrame.merge(receivedCases, on='CRN', how = 'left')
 	shootingDataFrame = shootingDataFrame[shootingDataFrame['Ref']=="Yes"]
 
-	#load bonds
-	bonds = "C:\\Users\\hchapman\\OneDrive - Jackson County Missouri\\Documents\\Dashboards\\BondGatherer\\AllBonds.csv"
-	bondsDataFrame = pd.read_csv(bonds)
-	shootingDataFrame = shootingDataFrame.merge(bondsDataFrame, on ='File #', how = 'left')
-
 	shootingDataFrame = shootingDataFrame.drop_duplicates()
 
 	getDefendantGender(shootingDataFrame, agencyLabel)
@@ -279,8 +221,6 @@ def runAnalysis(shootingDataFrame, karpelCases, agencyLabel):
 	getDefendantRace(shootingDataFrame, agencyLabel)
 
 	getDefendantAge(shootingDataFrame, agencyLabel)
-
-	getDefendantBond(shootingDataFrame, agencyLabel)
 
 	return 0
 

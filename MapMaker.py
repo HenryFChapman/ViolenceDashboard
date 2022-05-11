@@ -12,7 +12,6 @@ def loadShootingData():
 	frames = []
 	for item in os.listdir(folder):
 		tempYearDataFrame = pd.read_excel(folder+item)
-		#masterShootingDataFrame = masterShootingDataFrame.append(tempYearDataFrame)
 		frames.append(tempYearDataFrame)
 
 	masterShootingDataFrame = pd.concat(frames)

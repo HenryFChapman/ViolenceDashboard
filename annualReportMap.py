@@ -72,7 +72,6 @@ coordinates = byPoint["geometry"].str.split(" ", n = 2, expand = True)
 
 byPoint['Longitude'] = coordinates[1]
 byPoint['Latitude'] = coordinates[2]
-#print(byPoint.head())
 
 byPoint['Event'] = byPoint.Type.apply(lambda x: overarchingType(x))
 byPoint['Homicide Casualties'] = byPoint.Type.apply(lambda x: countHomicideVictims(x))
@@ -89,8 +88,5 @@ byPoint = byPoint.drop_duplicates(subset = 'CRN')
 
 byPoint = byPoint.astype(str)
 
-#byPoint['DateTime'] = byPoint['DateTime'].str.replace('{', "")
-
-print(byPoint.DateTime.head())
 
 byPoint.to_csv("MapData.csv", index = False)

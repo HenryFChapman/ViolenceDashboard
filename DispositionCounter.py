@@ -25,10 +25,6 @@ def disposedCaseCounter(fnList, disposedCaseDF, flag):
         elif "Drug Court" in justThatCase['Activity'].tolist():
             dispositionReasons.append("Drug Court")
         elif "Entire Dismissal" in justThatCase['Activity'].tolist():
-
-            if flag == True:
-                print(tempFN)
-
             dispositionReasons.append("Entire Dismissal")
         elif "No Prosecution" in justThatCase['Activity'].tolist():
             dispositionReasons.append("No Prosecution")
@@ -48,8 +44,6 @@ def disposedCaseCounter(fnList, disposedCaseDF, flag):
 
 
 def declinedCaseCounter(fnList, declinedCaseDF):
-
-    #print(declinedCaseDF.columns)
 
     #Here we're trying to get one disposition reason per declined case
     #Here's the prioritization of declined cases

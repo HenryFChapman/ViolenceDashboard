@@ -23,7 +23,6 @@ def generateAllCaseHistory(crimeCategory, numberOfIncidents, atLeast1ReferredCas
 	flag = False
 	if "All" in crimeCategory:
 		flag = True
-		print(flag)
 
 	remainingMultiDefendants = len(receivedFileNumbers) - atLeast1ReferredCase
 
@@ -47,17 +46,11 @@ def generateAllCaseHistory(crimeCategory, numberOfIncidents, atLeast1ReferredCas
 	disposedFileNumbers = disposedSet.intersection(receivedFileNumbers)
 	disposedFileNumbers = list(disposedSet.intersection(filedFileNumbers))
 
-	if flag == True:
-		print(disposedFileNumbers)
 	disposalReasons = disposedCaseCounter(disposedFileNumbers, listOfKarpelCases[2], flag)
 
 	#Currently Pending/Under Warrant Status
 	#Currently Pending = Filed - Disposed
 	activeSet = set(filedFileNumbers).difference(disposedFileNumbers)
-
-
-	#if "All" in crimeCategory:
-	#	print(activeSet)
 
 	links = [
 		{'source': 'A - Incidents Occured', 'target':'B - Received by Office', 'value': atLeast1ReferredCase},
@@ -107,10 +100,6 @@ def generateAllCaseHistory(crimeCategory, numberOfIncidents, atLeast1ReferredCas
 	fig.update_layout(title =  dict(text ="KCPD Case Referrals of " + updatedTitle + " Cases",
                                font =dict(size=30,
                                color = 'Black')), font_size=10, title_x=0.5)	
-
-	#fig.update_layout(title =  dict(text ="KCPD Case Referrals of " + updatedTitle + " Cases",
-    #                           font =dict(size=30,
-    #                           color = 'White')), font_size=15, title_x=0.5, plot_bgcolor='rgba(34,34,34,255)', paper_bgcolor='rgba(34,34,34,255)',)
 
 	path = "C:\\Users\\hchapman\\OneDrive - Jackson County Missouri\\Documents\\Dashboards\\KCPD Clearance Dashboard\\Sankeys\\ViolenceDashboard\\"
 	fig.write_html(path + crimeCategory + ".html")
